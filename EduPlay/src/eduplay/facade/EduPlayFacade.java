@@ -2,7 +2,7 @@ package eduplay.facade;
 
 import eduplay.jogo.*;
 import eduplay.tabuleiro.*;
-import eduplay.desafios.factory.*;
+import eduplay.tabuleiro.factory.TabuleiroFactory;
 import eduplay.interfacejogo.InterfaceTerminal;
 
 import java.util.*;
@@ -38,7 +38,10 @@ public class EduPlayFacade {
         }
 
         List<Jogador> jogadores = criarJogadores();
-        Tabuleiro tabuleiro = criarTabuleiro(totalCasas, totalDesafios);
+
+        TabuleiroFactory tabuleiroFactory = new TabuleiroFactory();
+        Tabuleiro tabuleiro = tabuleiroFactory.criar(totalCasas, totalDesafios);
+
         InterfaceTerminal interfaceTerminal = new InterfaceTerminal(tabuleiro, jogadores);
 
         Jogo jogo = new Jogo(jogadores, tabuleiro, interfaceTerminal);
@@ -71,35 +74,5 @@ public class EduPlayFacade {
         }
 
         return jogadores;
-    }
-
-    private Tabuleiro criarTabuleiro(int casas, int desafios) {
-
-        List<Casa> lista = new ArrayList<>();
-
-        DesafioFactory matematica = new DesafioMatematicaFactory();
-        DesafioFactory logica = new DesafioLogicaFactory();
-
-        
-        Set<Integer> posicoesDesafio = new HashSet<>();
-        Random random = new Random();
-
-        while (posicoesDesafio.size() < desafios) {
-            posicoesDesafio.add(random.nextInt(casas - 1) + 1);
-        }
-
-        for (int i = 0; i < casas; i++) {
-            if (posicoesDesafio.contains(i)) {
-                if (random.nextBoolean()) {
-                    lista.add(new CasaDesafio(matematica.criarDesafio()));
-                } else {
-                    lista.add(new CasaDesafio(logica.criarDesafio()));
-                }
-            } else {
-                lista.add(new CasaComum());
-            }
-        }
-
-        return new Tabuleiro(lista);
     }
 }
